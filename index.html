@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,10 +16,9 @@
     />
     <link rel="shortcut icon" href="./fav-icon.png" type="image/x-icon" />
     <link
-  href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
-  rel="stylesheet"
-/>
-
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.9.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
     <style>
       *,
       *::before,
@@ -28,7 +27,16 @@
         margin: 0;
         padding: 0;
       }
+
+      /* ── THEME TOKENS ── */
       :root {
+        --fd: "Bebas Neue", sans-serif;
+        --fs: "Instrument Serif", serif;
+        --fb: "Cabinet Grotesk", sans-serif;
+        --fm: "JetBrains Mono", monospace;
+        --ease: cubic-bezier(0.76, 0, 0.24, 1);
+      }
+      [data-theme="dark"] {
         --bg: #07070a;
         --bg2: #0d0d12;
         --bg3: #14141c;
@@ -41,17 +49,32 @@
         --lime2: #a3cc1a;
         --lime3: rgba(200, 241, 53, 0.08);
         --orange: #f26a35;
-        --blue: #5b8af5;
         --purple: #a78bfa;
         --border: rgba(255, 255, 255, 0.055);
         --border2: rgba(255, 255, 255, 0.11);
-        --fd: "Bebas Neue", sans-serif;
-        --fs: "Instrument Serif", serif;
-        --fb: "Cabinet Grotesk", sans-serif;
-        --fm: "JetBrains Mono", monospace;
-        --ease: cubic-bezier(0.76, 0, 0.24, 1);
-        --easin: cubic-bezier(0.4, 0, 1, 1);
+        --nav-bg: rgba(7, 7, 10, 0.92);
+        --grain: 0.032;
       }
+      [data-theme="light"] {
+        --bg: #f4f1ec;
+        --bg2: #ebe7e0;
+        --bg3: #dedad2;
+        --bg4: #ccc8be;
+        --ink: #111010;
+        --ink2: #5a5650;
+        --ink3: #9a9590;
+        --ink4: #bab6b0;
+        --lime: #7ab800;
+        --lime2: #5d8f00;
+        --lime3: rgba(122, 184, 0, 0.1);
+        --orange: #d4521a;
+        --purple: #7c5cdc;
+        --border: rgba(0, 0, 0, 0.08);
+        --border2: rgba(0, 0, 0, 0.15);
+        --nav-bg: rgba(244, 241, 236, 0.92);
+        --grain: 0.018;
+      }
+
       html {
         scroll-behavior: smooth;
       }
@@ -63,6 +86,9 @@
         line-height: 1.6;
         overflow-x: hidden;
         cursor: none;
+        transition:
+          background 0.5s var(--ease),
+          color 0.5s var(--ease);
       }
 
       /* ── GRAIN ── */
@@ -73,8 +99,85 @@
         z-index: 8000;
         pointer-events: none;
         background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-        opacity: 0.032;
+        opacity: var(--grain);
         mix-blend-mode: overlay;
+      }
+
+      /* ── SCROLL PROGRESS ── */
+      #prog {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 2px;
+        background: var(--lime);
+        z-index: 9998;
+        width: 0%;
+        transition: width 0.05s linear;
+        box-shadow: 0 0 8px var(--lime);
+      }
+
+      /* ── PAGE LOADER ── */
+      #loader {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .ldr-name {
+        font-family: var(--fd);
+        font-size: clamp(48px, 8vw, 100px);
+        letter-spacing: 0.06em;
+        overflow: hidden;
+        display: flex;
+      }
+      .ldr-char {
+        display: inline-block;
+        transform: translateY(100%);
+        animation: ldrChar 0.6s var(--ease) forwards;
+        color: var(--ink);
+      }
+      .ldr-char.lime {
+        color: var(--lime);
+      }
+      .ldr-bar-wrap {
+        width: 200px;
+        height: 1px;
+        background: var(--border2);
+      }
+      .ldr-bar {
+        height: 100%;
+        background: var(--lime);
+        width: 0%;
+        animation: ldrBar 1.4s var(--ease) forwards;
+      }
+      .ldr-sub {
+        font-family: var(--fm);
+        font-size: 10px;
+        color: var(--ink3);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0;
+        animation: fadeUp 0.4s 1s forwards;
+      }
+      @keyframes ldrChar {
+        to {
+          transform: translateY(0);
+        }
+      }
+      @keyframes ldrBar {
+        to {
+          width: 100%;
+        }
+      }
+      @keyframes ldrWipe {
+        to {
+          transform: translateY(-100%);
+        }
       }
 
       /* ── CURSOR ── */
@@ -90,11 +193,19 @@
         mix-blend-mode: difference;
         transition:
           width 0.15s,
-          height 0.15s;
+          height 0.15s,
+          border-radius 0.15s;
       }
       #cur.big {
         width: 44px;
         height: 44px;
+      }
+      #cur.cross {
+        width: 24px;
+        height: 24px;
+        border-radius: 3px;
+        background: var(--lime);
+        opacity: 0.6;
       }
       .trail {
         position: fixed;
@@ -103,6 +214,59 @@
         border-radius: 50%;
         background: var(--lime);
         transform: translate(-50%, -50%);
+      }
+
+      /* ── SPOTLIGHT ── */
+      #spotlight {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background: radial-gradient(
+          600px circle at var(--sx, 50%) var(--sy, 50%),
+          rgba(200, 241, 53, 0.04) 0%,
+          transparent 70%
+        );
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      #hero:hover ~ #spotlight,
+      #spotlight.on {
+        opacity: 1;
+      }
+
+      /* ── THEME TOGGLE ── */
+      #tbtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border2);
+        background: transparent;
+        cursor: none;
+        color: var(--ink2);
+        font-size: 16px;
+        transition: all 0.25s;
+        flex-shrink: 0;
+      }
+      #tbtn:hover {
+        background: var(--bg3);
+        color: var(--ink);
+        border-color: var(--lime);
+      }
+      [data-theme="dark"] .i-sun {
+        display: block;
+      }
+      [data-theme="dark"] .i-moon {
+        display: none;
+      }
+      [data-theme="light"] .i-sun {
+        display: none;
+      }
+      [data-theme="light"] .i-moon {
+        display: block;
       }
 
       /* ── NAV ── */
@@ -123,10 +287,9 @@
         border-bottom: 1px solid transparent;
       }
       nav.stuck {
-        padding: 15px 64px;
-        background: rgba(7, 7, 10, 0.92);
+        padding: 14px 64px;
+        background: var(--nav-bg);
         backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
         border-color: var(--border);
       }
       .n-logo {
@@ -148,9 +311,28 @@
         color: var(--ink2);
         text-decoration: none;
         transition: color 0.2s;
+        position: relative;
+      }
+      .n-links a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -2px;
+        width: 0;
+        height: 1px;
+        background: var(--lime);
+        transition: width 0.3s var(--ease);
       }
       .n-links a:hover {
         color: var(--lime);
+      }
+      .n-links a:hover::after {
+        width: 100%;
+      }
+      .n-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
       }
       .n-pill {
         font-family: var(--fb);
@@ -163,11 +345,9 @@
         border: 1.5px solid var(--lime);
         color: var(--lime);
         text-decoration: none;
-        transition:
-          background 0.25s,
-          color 0.25s;
         position: relative;
         overflow: hidden;
+        transition: color 0.25s;
       }
       .n-pill::before {
         content: "";
@@ -241,6 +421,20 @@
         left: 35%;
         animation: orbF 20s 2s ease-in-out infinite alternate;
       }
+      [data-theme="light"] .orb1 {
+        background: radial-gradient(
+          circle,
+          rgba(122, 184, 0, 0.1) 0%,
+          transparent 68%
+        );
+      }
+      [data-theme="light"] .orb2 {
+        background: radial-gradient(
+          circle,
+          rgba(212, 82, 26, 0.08) 0%,
+          transparent 70%
+        );
+      }
       .h-bar {
         position: absolute;
         top: 0;
@@ -280,7 +474,6 @@
         color: var(--ink3);
         letter-spacing: 0.06em;
       }
-
       .h-content {
         position: relative;
         z-index: 2;
@@ -308,6 +501,7 @@
       .role-wrap {
         height: 50px;
         overflow: hidden;
+        position: relative;
       }
       .h-role {
         font-family: var(--fs);
@@ -316,18 +510,21 @@
         color: var(--ink2);
         display: block;
         position: absolute;
-        transform: translateY(100%);
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        transform: translateY(110%);
         opacity: 0;
         transition:
           transform 0.65s var(--ease),
-          opacity 0.65s;
+          opacity 0.55s var(--ease);
       }
       .h-role.on {
         transform: translateY(0);
         opacity: 1;
       }
       .h-role.off {
-        transform: translateY(-100%);
+        transform: translateY(-110%);
         opacity: 0;
       }
       .h-badge-row {
@@ -348,6 +545,9 @@
       .h-badge.lime {
         border-color: rgba(200, 241, 53, 0.3);
         color: var(--lime2);
+      }
+      [data-theme="light"] .h-badge.lime {
+        border-color: rgba(93, 143, 0, 0.35);
       }
       .h-bottom {
         display: flex;
@@ -375,7 +575,7 @@
         gap: 12px;
       }
 
-      /* ── BUTTONS ── */
+      /* ── MAGNETIC BUTTONS ── */
       .btn {
         display: inline-flex;
         align-items: center;
@@ -387,12 +587,11 @@
         letter-spacing: 0.07em;
         text-transform: uppercase;
         text-decoration: none;
-        transition:
-          box-shadow 0.3s,
-          transform 0.2s;
+        transition: box-shadow 0.3s;
         position: relative;
         overflow: hidden;
         cursor: none;
+        will-change: transform;
       }
       .btn::before {
         content: "";
@@ -404,6 +603,15 @@
       }
       .btn:hover::before {
         transform: scaleX(1);
+      }
+      .btn span {
+        position: relative;
+        z-index: 1;
+      }
+      .btn-ico {
+        font-size: 14px;
+        position: relative;
+        z-index: 1;
       }
       .btn-l {
         background: var(--lime);
@@ -424,16 +632,6 @@
       }
       .btn-g:hover {
         color: var(--ink);
-        border-color: var(--border2);
-      }
-      .btn-ico {
-        font-size: 14px;
-        position: relative;
-        z-index: 1;
-      }
-      .btn span {
-        position: relative;
-        z-index: 1;
       }
 
       /* ── MARQUEE ── */
@@ -449,6 +647,9 @@
         width: max-content;
         animation: marquee 32s linear infinite;
       }
+      .mq:hover .mq-t {
+        animation-play-state: paused;
+      }
       .mi {
         display: flex;
         align-items: center;
@@ -460,6 +661,10 @@
         text-transform: uppercase;
         color: var(--ink3);
         white-space: nowrap;
+        transition: color 0.2s;
+      }
+      .mi:hover {
+        color: var(--lime);
       }
       .ms {
         width: 4px;
@@ -469,10 +674,7 @@
         flex-shrink: 0;
       }
 
-      /* ── SECTION BASE ── */
-      .sec {
-        padding: 120px 64px;
-      }
+      /* ── SECTIONS ── */
       .sec-tag {
         display: inline-flex;
         align-items: center;
@@ -573,13 +775,20 @@
         transition:
           border-color 0.2s,
           color 0.2s,
-          background 0.2s;
+          background 0.2s,
+          transform 0.15s;
         cursor: default;
       }
       .stag:hover {
         border-color: rgba(200, 241, 53, 0.4);
         color: var(--lime);
         background: var(--lime3);
+        transform: translateY(-2px);
+      }
+      [data-theme="light"] .stag:hover {
+        border-color: var(--lime2);
+        color: var(--lime2);
+        background: rgba(122, 184, 0, 0.08);
       }
       .lbar-row {
         display: flex;
@@ -609,9 +818,6 @@
         transform-origin: left;
         transform: scaleX(0);
         transition: transform 1.4s var(--ease);
-      }
-      .lb-f.go {
-        transform: scaleX(1);
       }
       .lb-p {
         font-family: var(--fm);
@@ -650,7 +856,7 @@
         transform: translate(3px, -3px);
       }
 
-      /* ── GSoC SECTION ── */
+      /* ── GSoC ── */
       #gsoc {
         padding: 120px 64px;
         background: var(--bg2);
@@ -694,6 +900,10 @@
         margin-bottom: 20px;
         background: rgba(200, 241, 53, 0.04);
       }
+      [data-theme="light"] .gsoc-org-badge {
+        border-color: rgba(93, 143, 0, 0.3);
+        background: rgba(122, 184, 0, 0.07);
+      }
       .gsoc-org-dot {
         width: 8px;
         height: 8px;
@@ -707,23 +917,31 @@
         color: var(--lime2);
         letter-spacing: 0.08em;
       }
-
-      /* PR cards */
       .pr-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 1px;
         background: var(--border);
       }
-      .pr-card {
+
+      /* 3D TILT CARD */
+      .tilt-card {
         background: var(--bg);
         padding: 36px 30px;
         position: relative;
         overflow: hidden;
-        transition: background 0.3s;
+        transition:
+          background 0.3s,
+          box-shadow 0.3s;
+        transform-style: preserve-3d;
+        will-change: transform;
       }
-      .pr-card:hover {
+      .tilt-card:hover {
         background: var(--bg3);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      }
+      [data-theme="light"] .tilt-card:hover {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
       }
       .pr-glow {
         position: absolute;
@@ -740,7 +958,7 @@
         opacity: 0;
         transition: opacity 0.4s;
       }
-      .pr-card:hover .pr-glow {
+      .tilt-card:hover .pr-glow {
         opacity: 1;
       }
       .pr-top {
@@ -757,6 +975,10 @@
         border: 1px solid rgba(200, 241, 53, 0.2);
         padding: 4px 10px;
         border-radius: 3px;
+      }
+      [data-theme="light"] .pr-num {
+        background: rgba(122, 184, 0, 0.1);
+        border-color: rgba(93, 143, 0, 0.25);
       }
       .pr-merged {
         font-family: var(--fm);
@@ -789,7 +1011,6 @@
         font-weight: 300;
         margin-bottom: 20px;
       }
-      /* code diff block */
       .diff-block {
         background: var(--bg4);
         border: 1px solid var(--border);
@@ -801,7 +1022,7 @@
       }
       .diff-bar {
         padding: 6px 12px;
-        background: rgba(255, 255, 255, 0.03);
+        background: rgba(128, 128, 128, 0.04);
         border-bottom: 1px solid var(--border);
         color: var(--ink3);
         font-size: 9px;
@@ -811,24 +1032,30 @@
         padding: 10px 12px;
       }
       .diff-add {
-        color: #7dd87d;
+        color: #5cb85c;
+        display: block;
         padding-left: 2px;
       }
       .diff-add::before {
         content: "+ ";
-        color: #4a8a4a;
+        color: #3a7a3a;
+      }
+      [data-theme="light"] .diff-add {
+        color: #2a6e2a;
       }
       .diff-rem {
-        color: #e07070;
+        color: #d9534f;
+        display: block;
         padding-left: 2px;
       }
       .diff-rem::before {
         content: "- ";
-        color: #8a4a4a;
+        color: #8a3a3a;
       }
       .diff-neu {
         color: var(--ink3);
         padding-left: 14px;
+        display: block;
       }
       .pr-impact {
         display: flex;
@@ -850,12 +1077,15 @@
       }
       .it-react {
         background: rgba(97, 218, 251, 0.1);
-        color: #61dafb;
+        color: #40b8d4;
         border: 1px solid rgba(97, 218, 251, 0.2);
+      }
+      [data-theme="light"] .it-react {
+        color: #1a7a96;
       }
       .it-db {
         background: rgba(242, 106, 53, 0.1);
-        color: #f2a035;
+        color: #c4702a;
         border: 1px solid rgba(242, 106, 53, 0.2);
       }
       .it-test {
@@ -864,13 +1094,16 @@
         border: 1px solid rgba(167, 139, 250, 0.2);
       }
 
-      /* GSoC terminal */
+      /* REAL TYPING TERMINAL */
       .gsoc-terminal {
         margin-top: 48px;
-        background: var(--bg4);
+        background: #0a0a10;
         border: 1px solid var(--border);
         border-radius: 6px;
         overflow: hidden;
+      }
+      [data-theme="light"] .gsoc-terminal {
+        background: #141420;
       }
       .term-bar {
         display: flex;
@@ -878,7 +1111,7 @@
         gap: 8px;
         padding: 12px 18px;
         background: rgba(255, 255, 255, 0.02);
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
       }
       .t-dot {
         width: 10px;
@@ -897,7 +1130,7 @@
       .term-title {
         font-family: var(--fm);
         font-size: 10px;
-        color: var(--ink3);
+        color: #5a5a6a;
         margin-left: 8px;
         letter-spacing: 0.06em;
       }
@@ -906,42 +1139,39 @@
         font-family: var(--fm);
         font-size: 11px;
         line-height: 1.9;
+        min-height: 240px;
       }
       .t-line {
         display: block;
       }
       .t-prompt {
-        color: var(--lime2);
+        color: #a3cc1a;
       }
       .t-cmd {
-        color: var(--ink2);
+        color: #9090a0;
       }
       .t-out {
-        color: var(--ink3);
+        color: #4a4a5a;
         padding-left: 18px;
         display: block;
       }
       .t-ok {
-        color: #7dd87d;
-        padding-left: 18px;
-        display: block;
-      }
-      .t-err {
-        color: #e07070;
+        color: #5cb85c;
         padding-left: 18px;
         display: block;
       }
       .t-comment {
-        color: var(--ink4);
+        color: #2a2a3a;
         padding-left: 18px;
         display: block;
       }
-      .t-cursor {
+      .t-cursor-blink {
         display: inline-block;
         width: 7px;
-        height: 13px;
+        height: 12px;
         background: var(--lime);
         animation: blink 0.9s infinite;
+        vertical-align: middle;
       }
 
       /* ── PROJECTS ── */
@@ -977,6 +1207,8 @@
         gap: 1px;
         background: var(--border);
       }
+
+      /* PROJECT TILT CARDS */
       .pc {
         background: var(--bg);
         padding: 40px 36px;
@@ -985,11 +1217,19 @@
         text-decoration: none;
         color: inherit;
         display: block;
-        transition: background 0.3s;
+        transition:
+          background 0.3s,
+          box-shadow 0.3s;
         cursor: none;
+        transform-style: preserve-3d;
+        will-change: transform;
       }
       .pc:hover {
         background: var(--bg2);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      }
+      [data-theme="light"] .pc:hover {
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.1);
       }
       .pg {
         position: absolute;
@@ -1005,6 +1245,13 @@
         transform: translate(-50%, -50%);
         opacity: 0;
         transition: opacity 0.4s;
+      }
+      [data-theme="light"] .pg {
+        background: radial-gradient(
+          circle,
+          rgba(122, 184, 0, 0.1) 0%,
+          transparent 70%
+        );
       }
       .pc:hover .pg {
         opacity: 1;
@@ -1101,8 +1348,14 @@
         white-space: pre;
         transition: color 0.4s;
       }
+      [data-theme="light"] .pvisc {
+        color: rgba(93, 143, 0, 0.14);
+      }
       .pc:hover .pvisc {
         color: rgba(200, 241, 53, 0.32);
+      }
+      [data-theme="light"] .pc:hover .pvisc {
+        color: rgba(93, 143, 0, 0.3);
       }
 
       /* ── EXPERIENCE ── */
@@ -1255,7 +1508,8 @@
         background: var(--bg2);
       }
       .aw-i {
-        font-size: 16px;
+        font-size: 18px;
+        color: var(--lime2);
         flex-shrink: 0;
         margin-top: 2px;
       }
@@ -1319,14 +1573,15 @@
         box-shadow: 0 0 36px rgba(200, 241, 53, 0.38);
         transform: translateY(-2px);
       }
-      .res-targets {
-        margin-top: 40px;
-      }
       .rc {
         background: var(--bg);
         border: 1px solid var(--border);
         border-radius: 5px;
         overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      [data-theme="light"] .rc {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
       }
       .rc-hd {
         padding: 14px 18px;
@@ -1445,7 +1700,7 @@
       .cbg-w {
         font-family: var(--fd);
         font-size: 27vw;
-        color: rgba(255, 255, 255, 0.013);
+        color: rgba(128, 128, 128, 0.03);
         white-space: nowrap;
         user-select: none;
         letter-spacing: -0.02em;
@@ -1574,7 +1829,38 @@
         transition-delay: 0.3s;
       }
 
-      /* ── RESPONSIVE ── */
+      /* ── CURRENTLY BUILDING TICKER ── */
+      .now-ticker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 7px 14px;
+        border: 1px solid var(--border2);
+        border-radius: 40px;
+        font-family: var(--fm);
+        font-size: 9px;
+        letter-spacing: 0.08em;
+        color: var(--ink3);
+      }
+      .now-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--lime);
+        box-shadow: 0 0 6px var(--lime);
+        animation: pulse 1.5s infinite;
+        flex-shrink: 0;
+      }
+      .now-label {
+        color: var(--lime2);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .now-text {
+        color: var(--ink2);
+      }
+
       @media (max-width: 960px) {
         nav,
         nav.stuck {
@@ -1589,8 +1875,6 @@
         .h-bar {
           padding: 120px 24px 0;
         }
-        .sec,
-        .sec ~ div,
         #about,
         #gsoc,
         #projects,
@@ -1600,7 +1884,7 @@
           padding: 80px 24px;
         }
         #about,
-        #gsoc .gsoc-header,
+        .gsoc-header,
         .pr-grid,
         .pgrid,
         .exp-grid,
@@ -1638,7 +1922,21 @@
     </style>
   </head>
   <body>
+    <!-- PAGE LOADER -->
+    <div id="loader">
+      <div class="ldr-name" id="ldrName"></div>
+      <div class="ldr-bar-wrap"><div class="ldr-bar"></div></div>
+      <div class="ldr-sub">Fullstack Developer · GSoC 2026</div>
+    </div>
+
+    <!-- SCROLL PROGRESS -->
+    <div id="prog"></div>
+
+    <!-- CURSOR -->
     <div id="cur"></div>
+
+    <!-- SPOTLIGHT -->
+    <div id="spotlight"></div>
 
     <!-- NAV -->
     <nav id="nav">
@@ -1651,9 +1949,15 @@
         <li><a href="#resume">Resume</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
-      <a class="n-pill" href="mailto:nickytwist70@gmail.com"
-        ><span>Hire me ↗</span></a
-      >
+      <div class="n-right">
+        <button id="tbtn" aria-label="Toggle theme">
+          <i class="ri-sun-line i-sun"></i>
+          <i class="ri-moon-line i-moon"></i>
+        </button>
+        <a class="n-pill" href="mailto:nickytwist70@gmail.com"
+          ><span>Hire me ↗</span></a
+        >
+      </div>
     </nav>
 
     <!-- HERO -->
@@ -1668,14 +1972,16 @@
         <span class="h-loc">DESIGNER, DEVELOPER, DATA ANALYST</span>
       </div>
       <div class="h-content">
-        <h1 class="h-name">I'M SHWE WIN<br /><span class="stroke">AUNG</span></h1>
+        <h1 class="h-name">
+          I'M SHWE WIN<br /><span class="stroke" id="scrambleTarget">AUNG</span>
+        </h1>
         <div class="h-mid">
           <div class="role-wrap">
             <span class="h-role on" id="r0">Fullstack Developer</span>
-            <span class="h-role " id="r1">React Specialist</span>
-            <span class="h-role " id="r2">Open Source Contributor</span>
-            <span class="h-role " id="r3">GSoC 2026 · Data Umbrella</span>
-            <span class="h-role " id="r4">Building for Southeast Asia</span>
+            <span class="h-role" id="r1">React Specialist</span>
+            <span class="h-role" id="r2">Open Source Contributor</span>
+            <span class="h-role" id="r3">GSoC 2026 · Data Umbrella</span>
+            <span class="h-role" id="r4">Building for Southeast Asia</span>
           </div>
           <div class="h-badge-row">
             <div class="h-badge lime">GSoC 2026 · Open Science Labs</div>
@@ -1690,10 +1996,12 @@
             Building for the next billion.
           </p>
           <div class="h-cta">
-            <a class="btn btn-l" href="#projects"
+            <a class="btn btn-l mag" href="#projects"
               ><span class="btn-ico">↓</span><span>See work</span></a
             >
-            <a class="btn btn-g" href="#gsoc"><span>GSoC deep-dive</span></a>
+            <a class="btn btn-g mag" href="#gsoc"
+              ><span>GSoC deep-dive</span></a
+            >
           </div>
         </div>
       </div>
@@ -1709,13 +2017,13 @@
         <h2 class="a-big">CODE WITH<br /><em>PURPOSE,</em><br />SHIP IT.</h2>
         <p class="cp">
           I'm a <strong>fullstack developer</strong> building things that reach
-          real users  multilingual websites, AI-powered platforms, government
+          real users — multilingual websites, AI-powered platforms, government
           document intelligence. Across freelance, team, and hackathon
           environments.
         </p>
         <p class="cp">
           Originally from <strong>Myanmar</strong>. Fluent in Burmese, English
-          and Chinese  I bring cross-cultural perspective to every product,
+          and Chinese — I bring cross-cultural perspective to every product,
           building for the communities that need tech most.
         </p>
         <div class="stat-grid">
@@ -1790,7 +2098,7 @@
       </div>
     </section>
 
-    <!-- GSoC DEEP-DIVE -->
+    <!-- GSoC -->
     <section id="gsoc">
       <div class="sec-tag reveal">
         <span class="num">02</span> Open Source · Google Summer of Code 2026
@@ -1798,8 +2106,8 @@
       <div class="gsoc-header reveal">
         <div>
           <div class="gsoc-org-badge">
-            <span class="gsoc-org-dot"></span>
-            <span class="gsoc-org-text"
+            <span class="gsoc-org-dot"></span
+            ><span class="gsoc-org-text"
               >Open Science Labs · Data Umbrella · GSoC 2026</span
             >
           </div>
@@ -1807,42 +2115,39 @@
         </div>
         <div>
           <p class="gsoc-intro">
-            Contributed to <strong>Data Umbrella's Event Board</strong>  an
+            Contributed to <strong>Data Umbrella's Event Board</strong> — an
             open-source platform for managing and discovering data science
-            community events. The Event Board is a fullstack app (Django REST +
-            React) used by the global data science community to surface
-            workshops, sprints, and conferences.
+            community events. A fullstack app (Django REST + React) used by the
+            global data science community to surface workshops, sprints, and
+            conferences.
           </p>
           <p class="gsoc-intro" style="margin-top: 12px">
             My contributions focused on a core missing feature:
             <strong>event format classification</strong>. Events lacked a
             standardised way to signal whether they were in-person, virtual, or
-            hybrid  critical information for attendees. I implemented this
+            hybrid — critical information for attendees. I implemented this
             end-to-end: database schema → API → validation → React UI → tests.
           </p>
         </div>
       </div>
-
-      <!-- PR Cards -->
       <div class="pr-grid reveal">
-        <!-- PR #115 -->
-        <div class="pr-card">
+        <div class="tilt-card">
           <div class="pr-glow"></div>
           <div class="pr-top">
-            <span class="pr-num">PR #115</span>
-            <span class="pr-merged">✓ Merged</span>
+            <span class="pr-num">PR #115</span
+            ><span class="pr-merged">✓ Merged</span>
           </div>
           <h3 class="pr-title">ADD EVENT FORMAT FIELD TO MODEL</h3>
           <p class="pr-what">What was broken</p>
           <p class="pr-desc">
             The <code>Event</code> Django model had no way to classify whether
             an event was in-person, virtual, or hybrid. Attendees had no
-            structured way to filter by format  it was buried in free-text
-            descriptions or simply missing.
+            structured way to filter by format — buried in free-text or simply
+            missing.
           </p>
           <p class="pr-what">What I fixed</p>
           <div class="diff-block">
-            <div class="diff-bar">events/models.py  Django Model</div>
+            <div class="diff-bar">events/models.py — Django Model</div>
             <div class="diff-body">
               <span class="diff-add">FORMAT_CHOICES = [</span>
               <span class="diff-add"> ('in_person', 'In Person'),</span>
@@ -1858,29 +2163,26 @@
             </div>
           </div>
           <div class="pr-impact">
-            <span class="impact-tag it-python">Python / Django ORM</span>
-            <span class="impact-tag it-db">DB Migration</span>
+            <span class="impact-tag it-python">Python / Django ORM</span
+            ><span class="impact-tag it-db">DB Migration</span>
           </div>
         </div>
-
-        <!-- PR #116 -->
-        <div class="pr-card">
+        <div class="tilt-card">
           <div class="pr-glow"></div>
           <div class="pr-top">
-            <span class="pr-num">PR #116</span>
-            <span class="pr-merged">✓ Merged</span>
+            <span class="pr-num">PR #116</span
+            ><span class="pr-merged">✓ Merged</span>
           </div>
           <h3 class="pr-title">SERIALIZER & API VALIDATION</h3>
           <p class="pr-what">What was broken</p>
           <p class="pr-desc">
             Even after adding the model field, the REST API was not exposing
             <code>event_format</code> in responses, and there was no server-side
-            validation to reject invalid format values  any string could be
-            submitted.
+            validation to reject invalid format values.
           </p>
           <p class="pr-what">What I fixed</p>
           <div class="diff-block">
-            <div class="diff-bar">events/serializers.py  DRF Serializer</div>
+            <div class="diff-bar">events/serializers.py — DRF Serializer</div>
             <div class="diff-body">
               <span class="diff-rem">fields = ['id','title','date',...]</span>
               <span class="diff-add">fields = ['id','title','date',</span>
@@ -1898,29 +2200,26 @@
             </div>
           </div>
           <div class="pr-impact">
-            <span class="impact-tag it-python">Django REST Framework</span>
-            <span class="impact-tag it-test">Validation</span>
+            <span class="impact-tag it-python">Django REST Framework</span
+            ><span class="impact-tag it-test">Validation</span>
           </div>
         </div>
-
-        <!-- PR #118 -->
-        <div class="pr-card">
+        <div class="tilt-card">
           <div class="pr-glow"></div>
           <div class="pr-top">
-            <span class="pr-num">PR #118</span>
-            <span class="pr-merged">✓ Merged</span>
+            <span class="pr-num">PR #118</span
+            ><span class="pr-merged">✓ Merged</span>
           </div>
-          <h3 class="pr-title">REACT UI  FORMAT FILTER & DISPLAY</h3>
+          <h3 class="pr-title">REACT UI — FORMAT FILTER & DISPLAY</h3>
           <p class="pr-what">What was broken</p>
           <p class="pr-desc">
             The frontend had no UI component to display or filter by event
-            format. Users browsing the event board couldn't distinguish
-            in-person from virtual events at a glance  a critical UX gap for a
-            global community.
+            format. Users couldn't distinguish in-person from virtual events at
+            a glance — a critical UX gap for a global community.
           </p>
           <p class="pr-what">What I fixed</p>
           <div class="diff-block">
-            <div class="diff-bar">src/components/EventCard.tsx  React</div>
+            <div class="diff-bar">src/components/EventCard.tsx — React</div>
             <div class="diff-body">
               <span class="diff-add">const FORMAT_LABELS = {</span>
               <span class="diff-add"> in_person: '📍 In Person',</span>
@@ -1937,14 +2236,14 @@
             </div>
           </div>
           <div class="pr-impact">
-            <span class="impact-tag it-react">React + TypeScript</span>
-            <span class="impact-tag it-test">UI Component</span>
+            <span class="impact-tag it-react">React + TypeScript</span
+            ><span class="impact-tag it-test">UI Component</span>
           </div>
         </div>
       </div>
 
-      <!-- Terminal -->
-      <div class="gsoc-terminal reveal d2">
+      <!-- REAL TYPING TERMINAL -->
+      <div class="gsoc-terminal reveal d2" id="terminal">
         <div class="term-bar">
           <div class="t-dot r"></div>
           <div class="t-dot y"></div>
@@ -1953,58 +2252,7 @@
             >niteash@gsoc-2026 ~ data-umbrella/event-board-api</span
           >
         </div>
-        <div class="term-body">
-          <span class="t-line"
-            ><span class="t-prompt">→ </span
-            ><span class="t-cmd"
-              >git log --oneline --author="niteash" main</span
-            ></span
-          >
-          <span class="t-ok"
-            >a3f812c feat: add event_format field to Event model + migration
-            (#115)</span
-          >
-          <span class="t-ok"
-            >9d2e441 feat: expose event_format in serializer + add validation
-            (#116)</span
-          >
-          <span class="t-ok"
-            >c7b93f0 feat: React UI  FormatBadge component + filter support
-            (#118)</span
-          >
-          <span class="t-line">&nbsp;</span>
-          <span class="t-line"
-            ><span class="t-prompt">→ </span
-            ><span class="t-cmd"
-              >gh pr list --state merged --author niteash</span
-            ></span
-          >
-          <span class="t-out"
-            >#115 feat: add event_format field to model MERGED ✓</span
-          >
-          <span class="t-out"
-            >#116 feat: serializer validation + API exposure MERGED ✓</span
-          >
-          <span class="t-out"
-            >#118 feat: React FormatBadge + filter UI MERGED ✓</span
-          >
-          <span class="t-line">&nbsp;</span>
-          <span class="t-line"
-            ><span class="t-prompt">→ </span
-            ><span class="t-cmd"
-              >python manage.py test events --verbosity=2</span
-            ></span
-          >
-          <span class="t-ok">test_event_format_choices ... ok</span>
-          <span class="t-ok">test_invalid_format_rejected ... ok</span>
-          <span class="t-ok">test_api_returns_format_field ... ok</span>
-          <span class="t-comment"># Ran 3 tests in 0.041s  — OK</span>
-          <span class="t-line">&nbsp;</span>
-          <span class="t-line"
-            ><span class="t-prompt">→ </span
-            ><span class="t-cmd">_<span class="t-cursor"></span></span
-          ></span>
-        </div>
+        <div class="term-body" id="termBody"></div>
       </div>
     </section>
 
@@ -2017,7 +2265,7 @@
         </p>
       </div>
       <div class="pgrid">
-        <a class="pc wide" href="https://panthazin.net/ target="_blank">
+        <a class="pc wide" href="https://panthazin.net/" target="_blank">
           <div class="pcc">
             <div class="pg"></div>
             <p class="pn">01 — Freelance · Nov 2025</p>
@@ -2047,7 +2295,11 @@
             </div>
           </div>
         </a>
-        <a class="pc"           href="https://www.linkedin.com/posts/shwe-win-aung_introducing-ai-trip-planner-project-thanks-ugcPost-7337351026447982593-yyzj?utm_source=share&utm_medium=member_desktop&rcm=ACoAADsFmOsBDG3o48aENLdn9wtvg_csINsd1hY" target="_blank">
+        <a
+          class="pc"
+          href="https://www.linkedin.com/posts/shwe-win-aung_introducing-ai-trip-planner-project-thanks-ugcPost-7337351026447982593-yyzj"
+          target="_blank"
+        >
           <div class="pg"></div>
           <p class="pn">02 — Team of 9 · Jan 2025</p>
           <h3 class="pt">AI TRIP PLANNER</h3>
@@ -2067,7 +2319,7 @@
             ><span class="pa">↗</span>
           </div>
         </a>
-        <a class="pc" href="https://www.linkedin.com/posts/shwe-win-aung_sih2025-smartindiahackathon-codeterrors-ugcPost-7377798790956773376-FtIh?utm_source=share&utm_medium=member_desktop&rcm=ACoAADsFmOsBDG3o48aENLdn9wtvg_csINsd1hY" target="_blank">
+        <a class="pc" href="https://kmrlish.vercel.app" target="_blank">
           <div class="pg"></div>
           <p class="pn">03 — SIH Grand Finale · 2025</p>
           <h3 class="pt">KMRL DOCUMENT AI</h3>
@@ -2105,7 +2357,11 @@
             ><span class="pa">↗</span>
           </div>
         </a>
-        <a class="pc" href="https://react-shopping-website-three.vercel.app/" target="_blank">
+        <a
+          class="pc"
+          href="https://react-shopping-website-three.vercel.app/"
+          target="_blank"
+        >
           <div class="pg"></div>
           <p class="pn">05 — Aug 2024</p>
           <h3 class="pt">REACT E-COMMERCE</h3>
@@ -2302,30 +2558,29 @@
       <div class="sec-tag reveal"><span class="num">05</span> Resume</div>
       <div class="res-layout">
         <div class="reveal">
-          <h2 class="res-h">DOWNLOAD<br /><em></em>CV</h2>
+          <h2 class="res-h">DOWNLOAD<br />CV</h2>
           <p class="res-sub">
             Fullstack Developer · React · TypeScript · Node.js · Python.
             Production apps, open source contributions, national hackathon
             finalist. Available globally.
           </p>
           <a
-            class="res-dl"
+            class="res-dl mag"
             href="./SHWE WIN AUNG - FullStack Developer.pdf"
             target="_blank"
             download
             >↓ &nbsp;Download Resume PDF</a
           >
-          <div class="res-targets" style="margin-top: 36px">
+          <div style="margin-top: 36px">
             <p class="sl">Open to roles in</p>
             <div class="stags" style="margin-top: 10px">
               <span class="stag">Singapore</span
               ><span class="stag">Netherlands</span
               ><span class="stag">Germany</span><span class="stag">Poland</span
               ><span class="stag">Thailand</span
-              ><span class="stag">Vietnam</span>
-              <span class="stag">England</span>
-              <span class="stag">India</span>
-              <span class="stag">Myanmar</span><span class="stag">Remote</span>
+              ><span class="stag">Vietnam</span><span class="stag">England</span
+              ><span class="stag">India</span><span class="stag">Myanmar</span
+              ><span class="stag">Remote</span>
             </div>
           </div>
         </div>
@@ -2434,6 +2689,12 @@
     <!-- CONTACT -->
     <section id="contact">
       <div class="cbg"><div class="cbg-w">HELLO</div></div>
+      <div class="now-ticker">
+        <span class="now-dot"></span><span class="now-label">Now&nbsp;</span
+        ><span class="now-text" id="nowText"
+          >Building portfolio · GSoC 2026 contributor</span
+        >
+      </div>
       <p class="c-eye">Let's build something real</p>
       <h2 class="c-h">GET IN<br /><em>TOUCH.</em></h2>
       <p class="c-p">
@@ -2441,20 +2702,23 @@
         collaborations worldwide.
       </p>
       <div class="c-btns">
-        <a class="btn btn-l" href="mailto:nickytwist70@gmail.com"
+        <a class="btn btn-l mag" href="mailto:nickytwist70@gmail.com"
           ><span>nickytwist70@gmail.com</span></a
         >
         <a
-          class="btn btn-g"
+          class="btn btn-g mag"
           href="https://linkedin.com/in/shwe-win-aung"
           target="_blank"
           ><span>LinkedIn</span></a
         >
-        <a class="btn btn-g" href="https://github.com/niteash" target="_blank"
+        <a
+          class="btn btn-g mag"
+          href="https://github.com/niteash"
+          target="_blank"
           ><span>GitHub</span></a
         >
         <a
-          class="btn btn-g"
+          class="btn btn-g mag"
           href="https://www.instagram.com/i_m_nicki?igsh=MTQwYnJyaDN3bWliZQ=="
           target="_blank"
           ><span>Instagram</span></a
@@ -2469,7 +2733,44 @@
     </footer>
 
     <script>
-      /* ── CURSOR + TRAIL ── */
+      /* ══════════════════════════════════════
+   PAGE LOADER
+══════════════════════════════════════ */
+      const ldrName = document.getElementById("ldrName");
+      const nameStr = "SHWE WIN AUNG";
+      nameStr.split("").forEach((ch, i) => {
+        const s = document.createElement("span");
+        s.className = "ldr-char" + (ch === "A" && i > 8 ? " lime" : "");
+        s.textContent = ch === " " ? "\u00a0" : ch;
+        s.style.animationDelay = i * 0.045 + "s";
+        ldrName.appendChild(s);
+      });
+      window.addEventListener("load", () => {
+        setTimeout(() => {
+          const l = document.getElementById("loader");
+          l.style.transition =
+            "transform .8s cubic-bezier(.76,0,.24,1),opacity .6s";
+          l.style.transform = "translateY(-100%)";
+          l.style.opacity = "0";
+          setTimeout(() => {
+            l.style.display = "none";
+          }, 900);
+        }, 1600);
+      });
+
+      /* ══════════════════════════════════════
+   SCROLL PROGRESS
+══════════════════════════════════════ */
+      window.addEventListener("scroll", () => {
+        const prog = document.getElementById("prog");
+        const pct =
+          (scrollY / (document.body.scrollHeight - innerHeight)) * 100;
+        prog.style.width = pct + "%";
+      });
+
+      /* ══════════════════════════════════════
+   CURSOR + TRAIL
+══════════════════════════════════════ */
       const cur = document.getElementById("cur");
       let mx = 0,
         my = 0;
@@ -2500,34 +2801,88 @@
         requestAnimationFrame(loop);
       })();
       document
-        .querySelectorAll("a,button,.pc,.stag,.ext-a,.pr-card,.rc")
+        .querySelectorAll("a,button,.pc,.stag,.ext-a,.tilt-card,.rc")
         .forEach((el) => {
           el.addEventListener("mouseenter", () => cur.classList.add("big"));
           el.addEventListener("mouseleave", () => cur.classList.remove("big"));
         });
 
-      /* ── NAV ── */
+      /* ══════════════════════════════════════
+   SPOTLIGHT
+══════════════════════════════════════ */
+      const spotlight = document.getElementById("spotlight");
+      document.addEventListener("mousemove", (e) => {
+        spotlight.style.setProperty("--sx", e.clientX + "px");
+        spotlight.style.setProperty("--sy", e.clientY + "px");
+        spotlight.classList.add("on");
+      });
+
+      /* ══════════════════════════════════════
+   THEME TOGGLE
+══════════════════════════════════════ */
+      const html = document.documentElement;
+      const saved = localStorage.getItem("swa-theme");
+      if (saved) html.setAttribute("data-theme", saved);
+      document.getElementById("tbtn").addEventListener("click", () => {
+        const next =
+          html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        localStorage.setItem("swa-theme", next);
+      });
+
+      /* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
       window.addEventListener("scroll", () =>
         document.getElementById("nav").classList.toggle("stuck", scrollY > 40),
       );
 
-      /* ── ROLES ── */
+      /* ══════════════════════════════════════
+   TEXT SCRAMBLE ON HERO NAME
+══════════════════════════════════════ */
+      const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%";
+      function scramble(el, final, duration = 1200) {
+        let frame = 0,
+          total = Math.round(duration / 30);
+        const t = setInterval(() => {
+          el.textContent = final
+            .split("")
+            .map((ch, i) => {
+              if (frame / total > i / final.length) return ch;
+              return CHARS[Math.floor(Math.random() * CHARS.length)];
+            })
+            .join("");
+          if (++frame > total) {
+            el.textContent = final;
+            clearInterval(t);
+          }
+        }, 30);
+      }
+      setTimeout(() => {
+        const el = document.getElementById("scrambleTarget");
+        if (el) scramble(el, "AUNG", 1400);
+      }, 1800);
+
+      /* ══════════════════════════════════════
+   ROLES (FIXED)
+══════════════════════════════════════ */
       const roles = document.querySelectorAll(".h-role");
       let ri = 0;
+      roles.forEach((r, i) => {
+        r.className = i === 0 ? "h-role on" : "h-role";
+      });
       setInterval(() => {
-        roles[ri].className = "h-role off";
+        const prev = ri;
         ri = (ri + 1) % roles.length;
-        roles.forEach((r, i) => {
-          if (i !== ri) r.className = "h-role off";
-        });
-        requestAnimationFrame(() =>
-          requestAnimationFrame(() => {
-            roles[ri].className = "h-role on";
-          }),
-        );
+        roles[prev].className = "h-role off";
+        roles[ri].className = "h-role";
+        void roles[ri].offsetWidth;
+        roles[ri].className = "h-role on";
       }, 2600);
 
-      /* ── MARQUEE ── */
+      /* ══════════════════════════════════════
+   MARQUEE
+══════════════════════════════════════ */
       const tags = [
         "React.js",
         "TypeScript",
@@ -2554,7 +2909,9 @@
           .join("");
       mt.innerHTML = mk() + mk();
 
-      /* ── SCROLL REVEAL ── */
+      /* ══════════════════════════════════════
+   SCROLL REVEAL
+══════════════════════════════════════ */
       const ro = new IntersectionObserver(
         (e) =>
           e.forEach((x) => {
@@ -2564,20 +2921,25 @@
       );
       document.querySelectorAll(".reveal").forEach((r) => ro.observe(r));
 
-      /* ── COUNTERS ── */
+      /* ══════════════════════════════════════
+   COUNTERS (ease-out)
+══════════════════════════════════════ */
       const co = new IntersectionObserver(
         (e) => {
           e.forEach((x) => {
             if (!x.isIntersecting) return;
             const el = x.target,
               target = +el.dataset.count;
-            let c = 0;
-            const step = Math.ceil(target / 40);
-            const t = setInterval(() => {
-              c = Math.min(c + step, target);
-              el.textContent = c + (target >= 100 ? "+" : "");
-              if (c >= target) clearInterval(t);
-            }, 28);
+            const start = performance.now(),
+              dur = 1600;
+            function step(now) {
+              const p = Math.min((now - start) / dur, 1);
+              const ease = 1 - Math.pow(1 - p, 3); // cubic ease-out
+              el.textContent =
+                Math.round(ease * target) + (target >= 100 ? "+" : "");
+              if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
             co.unobserve(el);
           });
         },
@@ -2585,14 +2947,15 @@
       );
       document.querySelectorAll("[data-count]").forEach((el) => co.observe(el));
 
-      /* ── LANGUAGE BARS ── */
+      /* ══════════════════════════════════════
+   LANGUAGE BARS
+══════════════════════════════════════ */
       const lo = new IntersectionObserver(
         (e) => {
           e.forEach((x) => {
             if (!x.isIntersecting) return;
             x.target.querySelectorAll(".lb-f").forEach((b) => {
               b.style.transform = `scaleX(${b.dataset.w})`;
-              b.classList.add("go");
             });
             lo.unobserve(x.target);
           });
@@ -2601,39 +2964,188 @@
       );
       document.querySelectorAll(".lbar-row").forEach((el) => lo.observe(el));
 
-      /* ── CARD GLOW FOLLOW ── */
-      document.querySelectorAll(".pc,.pr-card").forEach((card) => {
+      /* ══════════════════════════════════════
+   3D TILT CARDS (projects + PR cards)
+══════════════════════════════════════ */
+      document.querySelectorAll(".pc,.tilt-card").forEach((card) => {
         const g = card.querySelector(".pg,.pr-glow");
-        if (!g) return;
+
         card.addEventListener("mousemove", (e) => {
           const r = card.getBoundingClientRect();
-          g.style.left = e.clientX - r.left + "px";
-          g.style.top = e.clientY - r.top + "px";
+          const cx = e.clientX - r.left - r.width / 2;
+          const cy = e.clientY - r.top - r.height / 2;
+          const rx = (cy / r.height) * 10; // tilt intensity
+          const ry = -(cx / r.width) * 10;
+          card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.02,1.02,1.02)`;
+          if (g) {
+            g.style.left = e.clientX - r.left + "px";
+            g.style.top = e.clientY - r.top + "px";
+          }
+        });
+        card.addEventListener("mouseleave", () => {
+          card.style.transform =
+            "perspective(800px) rotateX(0) rotateY(0) scale3d(1,1,1)";
+          card.style.transition =
+            "transform .4s cubic-bezier(.76,0,.24,1), background .3s, box-shadow .3s";
+          setTimeout(() => (card.style.transition = ""), 400);
+        });
+        card.addEventListener("mouseenter", () => {
+          card.style.transition = "none";
         });
       });
 
-      /* ── TERMINAL TYPEWRITER ── */
-      const termLines = document.querySelectorAll(
-        ".term-body .t-line,.term-body .t-out,.term-body .t-ok,.term-body .t-err,.term-body .t-comment",
-      );
-      const termObs = new IntersectionObserver(
+      /* ══════════════════════════════════════
+   MAGNETIC BUTTONS
+══════════════════════════════════════ */
+      document.querySelectorAll(".mag").forEach((btn) => {
+        btn.addEventListener("mousemove", (e) => {
+          const r = btn.getBoundingClientRect();
+          const dx = e.clientX - (r.left + r.width / 2);
+          const dy = e.clientY - (r.top + r.height / 2);
+          btn.style.transform = `translate(${dx * 0.25}px, ${dy * 0.25}px)`;
+        });
+        btn.addEventListener("mouseleave", () => {
+          btn.style.transform = "translate(0,0)";
+          btn.style.transition =
+            "transform .4s cubic-bezier(.76,0,.24,1), box-shadow .3s";
+          setTimeout(() => (btn.style.transition = ""), 400);
+        });
+        btn.addEventListener("mouseenter", () => {
+          btn.style.transition = "none";
+        });
+      });
+
+      /* ══════════════════════════════════════
+   REAL TYPING TERMINAL
+══════════════════════════════════════ */
+      const termLines = [
+        { type: "prompt", text: 'git log --oneline --author="niteash" main' },
+        {
+          type: "ok",
+          text: "a3f812c  feat: add event_format field to Event model + migration (#115)",
+        },
+        {
+          type: "ok",
+          text: "9d2e441  feat: expose event_format in serializer + add validation (#116)",
+        },
+        {
+          type: "ok",
+          text: "c7b93f0  feat: React UI — FormatBadge component + filter support (#118)",
+        },
+        { type: "blank" },
+        { type: "prompt", text: "gh pr list --state merged --author niteash" },
+        {
+          type: "out",
+          text: "#115  feat: add event_format field to model          MERGED  ✓",
+        },
+        {
+          type: "out",
+          text: "#116  feat: serializer validation + API exposure       MERGED  ✓",
+        },
+        {
+          type: "out",
+          text: "#118  feat: React FormatBadge + filter UI             MERGED  ✓",
+        },
+        { type: "blank" },
+        { type: "prompt", text: "python manage.py test events --verbosity=2" },
+        { type: "ok", text: "test_event_format_choices ... ok" },
+        { type: "ok", text: "test_invalid_format_rejected ... ok" },
+        { type: "ok", text: "test_api_returns_format_field ... ok" },
+        { type: "comment", text: "# Ran 3 tests in 0.041s — OK" },
+        { type: "blank" },
+        { type: "cursor" },
+      ];
+      let termStarted = false;
+      const termEl = document.getElementById("terminal");
+      const termBody = document.getElementById("termBody");
+      function typeChar(el, text, cb) {
+        let i = 0;
+        function next() {
+          if (i <= text.length) {
+            el.textContent = text.slice(0, i++) + "";
+            setTimeout(next, 28);
+          } else {
+            if (cb) cb();
+          }
+        }
+        next();
+      }
+      function runTerminal() {
+        if (termStarted) return;
+        termStarted = true;
+        let li = 0;
+        function nextLine() {
+          if (li >= termLines.length) return;
+          const d = termLines[li++];
+          if (d.type === "blank") {
+            const sp = document.createElement("span");
+            sp.className = "t-line";
+            sp.innerHTML = "&nbsp;";
+            termBody.appendChild(sp);
+            setTimeout(nextLine, 80);
+            return;
+          }
+          if (d.type === "cursor") {
+            const sp = document.createElement("span");
+            sp.className = "t-line";
+            sp.innerHTML = `<span class="t-prompt">→ </span><span class="t-cmd">_<span class="t-cursor-blink"></span></span>`;
+            termBody.appendChild(sp);
+            return;
+          }
+          const sp = document.createElement("span");
+          if (d.type === "prompt") {
+            sp.className = "t-line";
+            const pre = document.createElement("span");
+            pre.className = "t-prompt";
+            pre.textContent = "→ ";
+            const cmd = document.createElement("span");
+            cmd.className = "t-cmd";
+            sp.appendChild(pre);
+            sp.appendChild(cmd);
+            termBody.appendChild(sp);
+            typeChar(cmd, d.text, () => setTimeout(nextLine, 100));
+          } else {
+            sp.className = `t-${d.type}`;
+            sp.style.opacity = "0";
+            termBody.appendChild(sp);
+            sp.style.transition = "opacity .2s";
+            requestAnimationFrame(() =>
+              requestAnimationFrame(() => (sp.style.opacity = "1")),
+            );
+            typeChar(sp, d.text, () => setTimeout(nextLine, 60));
+          }
+        }
+        nextLine();
+      }
+      new IntersectionObserver(
         (entries) => {
-          if (!entries[0].isIntersecting) return;
-          termLines.forEach((el, i) => {
-            el.style.opacity = "0";
-            el.style.transform = "translateY(6px)";
-            setTimeout(() => {
-              el.style.transition = "opacity .25s, transform .25s";
-              el.style.opacity = "1";
-              el.style.transform = "translateY(0)";
-            }, i * 80);
-          });
-          termObs.unobserve(entries[0].target);
+          if (entries[0].isIntersecting) runTerminal();
         },
         { threshold: 0.2 },
-      );
-      const termEl = document.querySelector(".gsoc-terminal");
-      if (termEl) termObs.observe(termEl);
+      ).observe(termEl);
+
+      /* ══════════════════════════════════════
+   "CURRENTLY BUILDING" TICKER
+══════════════════════════════════════ */
+      const nowItems = [
+        "Building Creative Projects · GSoC 2026 contributor",
+        "Learning Data Analyst · following new technology",
+        "Buidling AI automation model",
+        "Open to fulltime & freelance globally",
+      ];
+      let nowIdx = 0;
+      const nowEl = document.getElementById("nowText");
+      setInterval(() => {
+        nowEl.style.opacity = "0";
+        nowEl.style.transform = "translateY(6px)";
+        nowEl.style.transition = "opacity .3s, transform .3s";
+        setTimeout(() => {
+          nowIdx = (nowIdx + 1) % nowItems.length;
+          nowEl.textContent = nowItems[nowIdx];
+          nowEl.style.opacity = "1";
+          nowEl.style.transform = "translateY(0)";
+        }, 350);
+      }, 3000);
     </script>
   </body>
 </html>
