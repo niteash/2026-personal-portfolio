@@ -43,7 +43,7 @@
         --bg4: #1c1c26;
         --ink: #eeeae4;
         --ink2: #7c7975;
-        --ink3: #3a3836;
+        --ink3: #565656;
         --ink4: #22211f;
         --lime: #c8f135;
         --lime2: #a3cc1a;
@@ -1745,6 +1745,323 @@
         z-index: 1;
       }
 
+      /* ── REVIEWS ── */
+      #reviews {
+        padding: 120px 64px;
+        background: var(--bg);
+        border-top: 1px solid var(--border);
+      }
+      .rev-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 72px;
+      }
+      .rev-h {
+        font-family: var(--fd);
+        font-size: clamp(46px, 5.8vw, 86px);
+        line-height: 0.9;
+      }
+      .rev-h em {
+        -webkit-text-stroke: 1px var(--ink3);
+        -webkit-text-fill-color: transparent;
+        font-style: normal;
+      }
+      .rev-summary {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+      }
+      .rev-score {
+        font-family: var(--fd);
+        font-size: 64px;
+        line-height: 1;
+        color: var(--lime);
+      }
+      .rev-score-sub {
+        font-family: var(--fm);
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink3);
+      }
+      .rev-stars {
+        display: flex;
+        gap: 4px;
+      }
+      .rev-star {
+        font-size: 18px;
+        color: var(--lime);
+      }
+      .rev-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background: var(--border);
+      }
+      .rev-card {
+        background: var(--bg);
+        padding: 40px 36px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          background 0.3s,
+          box-shadow 0.3s;
+        transform-style: preserve-3d;
+        will-change: transform;
+      }
+      .rev-card:hover {
+        background: var(--bg2);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+      [data-theme="light"] .rev-card:hover {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+      }
+      .rev-card-glow {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(200, 241, 53, 0.06) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition: opacity 0.4s;
+      }
+      .rev-card:hover .rev-card-glow {
+        opacity: 1;
+      }
+      .rev-quote-mark {
+        font-family: var(--fd);
+        font-size: 72px;
+        line-height: 0.7;
+        color: var(--lime);
+        opacity: 0.25;
+        margin-bottom: 8px;
+        display: block;
+      }
+      .rev-testimonial {
+        font-family: var(--fs);
+        font-style: italic;
+        font-size: clamp(15px, 1.5vw, 18px);
+        color: var(--ink);
+        line-height: 1.7;
+        margin-bottom: 28px;
+        font-weight: 400;
+      }
+      .rev-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-top: 20px;
+        border-top: 1px solid var(--border);
+      }
+      .rev-client-name {
+        font-family: var(--fd);
+        font-size: 18px;
+        letter-spacing: 0.06em;
+        margin-bottom: 2px;
+      }
+      .rev-client-co {
+        font-family: var(--fm);
+        font-size: 9px;
+        color: var(--lime2);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .rev-date {
+        font-family: var(--fm);
+        font-size: 9px;
+        color: var(--ink3);
+        letter-spacing: 0.06em;
+        text-align: right;
+      }
+      .rev-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 20px;
+      }
+      .rev-badge {
+        font-family: var(--fm);
+        font-size: 9px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        letter-spacing: 0.06em;
+      }
+      .rb-green {
+        background: rgba(92, 184, 92, 0.1);
+        color: #5cb85c;
+        border: 1px solid rgba(92, 184, 92, 0.2);
+      }
+      .rb-blue {
+        background: rgba(91, 138, 245, 0.1);
+        color: #7ab3f5;
+        border: 1px solid rgba(91, 138, 245, 0.2);
+      }
+      .rb-orange {
+        background: rgba(242, 106, 53, 0.1);
+        color: var(--orange);
+        border: 1px solid rgba(242, 106, 53, 0.2);
+      }
+      .rb-lime {
+        background: rgba(200, 241, 53, 0.08);
+        color: var(--lime2);
+        border: 1px solid rgba(200, 241, 53, 0.2);
+      }
+      [data-theme="light"] .rb-lime {
+        background: rgba(122, 184, 0, 0.1);
+        border-color: rgba(93, 143, 0, 0.25);
+      }
+      .rev-ratings {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .rev-rating-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .rev-rating-label {
+        font-family: var(--fm);
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--ink3);
+        flex: 1;
+      }
+      .rev-rating-dots {
+        display: flex;
+        gap: 3px;
+      }
+      .rev-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--border2);
+      }
+      .rev-dot.on {
+        background: var(--lime);
+      }
+      [data-theme="light"] .rev-dot.on {
+        background: var(--lime2);
+      }
+      .rev-highlight {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-left: 2px solid var(--lime);
+        border-radius: 0 4px 4px 0;
+        padding: 14px 16px;
+        margin-bottom: 14px;
+        font-size: 12px;
+        color: var(--ink2);
+        line-height: 1.65;
+        font-weight: 300;
+        position: relative;
+      }
+      .rev-highlight::before {
+        content: attr(data-label);
+        display: block;
+        font-family: var(--fm);
+        font-size: 8px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--lime2);
+        margin-bottom: 6px;
+      }
+      .rev-lang-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--fm);
+        font-size: 9px;
+        color: var(--ink3);
+        border: 1px solid var(--border);
+        padding: 3px 10px;
+        border-radius: 3px;
+        margin-bottom: 12px;
+      }
+
+      /* review avatars */
+      .rev-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--fd);
+        font-size: 22px;
+        letter-spacing: 0.04em;
+        color: var(--bg);
+        position: relative;
+      }
+      .rev-avatar::after {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--lime) 0%,
+          var(--lime2) 50%,
+          var(--lime) 100%
+        );
+        z-index: -1;
+        animation: spinRing 6s linear infinite;
+      }
+      .rev-avatar-inner {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: var(--bg3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--fd);
+        font-size: 22px;
+        color: var(--lime);
+        position: relative;
+        z-index: 1;
+        border: 1px solid rgba(200, 241, 53, 0.15);
+      }
+      [data-theme="light"] .rev-avatar-inner {
+        background: var(--bg4);
+      }
+      .rev-meta-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      @keyframes spinRing {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (max-width: 960px) {
+        .rev-grid {
+          grid-template-columns: 1fr !important;
+        }
+        .rev-header {
+          flex-direction: column;
+          gap: 16px;
+          align-items: flex-start;
+        }
+        .rev-summary {
+          align-items: flex-start;
+        }
+      }
+
       footer {
         padding: 24px 64px;
         border-top: 1px solid var(--border);
@@ -1919,6 +2236,16 @@
           display: none;
         }
       }
+
+      .rev-avatar-inner img {
+        min-width: 100%;
+        min-height: 100%;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      .rev-avatar-inner {
+        overflow: hidden;
+      }
     </style>
   </head>
   <body>
@@ -1947,6 +2274,7 @@
         <li><a href="#projects">Work</a></li>
         <li><a href="#experience">Journey</a></li>
         <li><a href="#resume">Resume</a></li>
+        <li><a href="#reviews">Reviews</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
       <div class="n-right">
@@ -2686,6 +3014,189 @@
       </div>
     </section>
 
+    <!-- REVIEWS -->
+    <section id="reviews">
+      <div class="sec-tag reveal">
+        <span class="num">06</span> Client Reviews
+      </div>
+      <div class="rev-header reveal">
+        <h2 class="rev-h">WHAT<br />CLIENTS<br /><em>SAY</em></h2>
+        <div class="rev-summary">
+          <div class="rev-score">5.0</div>
+          <div class="rev-stars">
+            <span class="rev-star">★</span><span class="rev-star">★</span
+            ><span class="rev-star">★</span><span class="rev-star">★</span
+            ><span class="rev-star">★</span>
+          </div>
+          <div class="rev-score-sub">2 verified client reviews</div>
+        </div>
+      </div>
+      <div class="rev-grid">
+        <div class="rev-card" id="rc1">
+          <div class="rev-card-glow"></div>
+          <span class="rev-quote-mark">"</span>
+          <div class="rev-badges">
+            <span class="rev-badge rb-green">★ 5/5 Overall</span>
+            <span class="rev-badge rb-blue">★ 9/10 Design</span>
+            <span class="rev-badge rb-lime">★ 10/10 Comms</span>
+            <span class="rev-badge rb-orange">Delivered on time</span>
+          </div>
+          <p class="rev-testimonial">
+            It was a pleasure working together. The process was well-organised,
+            communication was clear, and the results exceeded my expectations.
+          </p>
+          <div class="rev-highlight" data-label="What they liked most">
+            I really like the clean, modern look of the design. The layout is
+            intuitive and easy to navigate, making the overall experience smooth
+            and enjoyable.
+          </div>
+          <div class="rev-ratings">
+            <div class="rev-rating-item">
+              <span class="rev-rating-label">Design</span>
+              <div class="rev-rating-dots">
+                <span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span>
+              </div>
+            </div>
+            <div class="rev-rating-item">
+              <span class="rev-rating-label">Speed</span>
+              <div class="rev-rating-dots">
+                <span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span>
+              </div>
+            </div>
+            <div class="rev-rating-item">
+              <span class="rev-rating-label">Comms</span>
+              <div class="rev-rating-dots">
+                <span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span>
+              </div>
+            </div>
+            <div class="rev-rating-item">
+              <span class="rev-rating-label">Devices</span>
+              <div class="rev-rating-dots">
+                <span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span>
+              </div>
+            </div>
+          </div>
+          <div class="rev-badges">
+            <span class="rev-badge rb-blue">📱 Mobile</span>
+            <span class="rev-badge rb-blue">💻 Desktop</span>
+            <span class="rev-badge rb-blue">📟 Tablet</span>
+            <span class="rev-badge rb-green">No bugs reported</span>
+            <span class="rev-badge rb-green">Would work again</span>
+          </div>
+          <div class="rev-meta">
+            <div class="rev-meta-left">
+              <div class="rev-avatar">
+                <div class="rev-avatar-inner">K</div>
+              </div>
+              <div>
+                <div class="rev-client-name">Kay Zin Htoo Naing</div>
+                <div class="rev-client-co">
+                  Verified Client · Fullstack Project
+                </div>
+              </div>
+            </div>
+            <div class="rev-date">
+              2 Apr 2026<br />kayzinhtoonaing1@gmail.com
+            </div>
+          </div>
+        </div>
+
+        <div class="rev-card" id="rc2">
+          <div class="rev-card-glow"></div>
+          <span class="rev-quote-mark">"</span>
+          <div class="rev-badges">
+            <span class="rev-badge rb-green">★ 5/5 Overall</span>
+            <span class="rev-badge rb-blue">★ 10/10 Design</span>
+            <span class="rev-badge rb-lime">Pann Tha Zin</span>
+            <span class="rev-badge rb-orange">Delivered on time</span>
+          </div>
+          <div class="rev-lang-badge">
+            <i class="ri-translate-2"></i> Original review in Burmese
+          </div>
+          <p class="rev-testimonial">
+            ချက်ချင်းကြည့်လို့ရပြီ ပို၍ဆင်ပြေ — "Immediately accessible and much
+            more elegant."
+          </p>
+          <div class="rev-highlight" data-label="What they liked most">
+            Site was immediately accessible and much more visually refined. Easy
+            to navigate, brand-aligned, and delivered exactly as requested — no
+            bugs encountered.
+          </div>
+          <div class="rev-highlight" data-label="Suggestion for improvement">
+            လူအများသိအောင်ပိုလုပ် — Increase public visibility and marketing
+            reach.
+          </div>
+          <div class="rev-ratings">
+            <div class="rev-rating-item">
+              <span class="rev-rating-label">Overall</span>
+              <div class="rev-rating-dots">
+                <span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span>
+              </div>
+            </div>
+            <div class="rev-rating-item">
+              <span class="rev-rating-label">Navigation</span>
+              <div class="rev-rating-dots">
+                <span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span>
+              </div>
+            </div>
+            <div class="rev-rating-item">
+              <span class="rev-rating-label">Features</span>
+              <div class="rev-rating-dots">
+                <span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span>
+              </div>
+            </div>
+            <div class="rev-rating-item">
+              <span class="rev-rating-label">Brand fit</span>
+              <div class="rev-rating-dots">
+                <span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span><span class="rev-dot on"></span
+                ><span class="rev-dot on"></span>
+              </div>
+            </div>
+          </div>
+          <div class="rev-badges">
+            <span class="rev-badge rb-green">No bugs reported</span>
+            <span class="rev-badge rb-lime">May showcase project</span>
+            <span class="rev-badge rb-green">Portfolio approved</span>
+          </div>
+          <div class="rev-meta">
+            <div class="rev-meta-left">
+              <div class="rev-avatar">
+                <div class="rev-avatar-inner">
+                  <img
+                    src="https://res.cloudinary.com/dcdc4hj6v/image/upload/v1772530991/owner_yv7vqg.jpg"
+                    alt="img-profile"
+                    srcset=""
+                  />
+                </div>
+              </div>
+              <div>
+                <div class="rev-client-name">Sai Lain Leng Fha</div>
+                <div class="rev-client-co">
+                  Pann Tha Zin · Building Materials
+                </div>
+              </div>
+            </div>
+            <div class="rev-date">6 Apr 2026<br />kosailay417@gmail.com</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- CONTACT -->
     <section id="contact">
       <div class="cbg"><div class="cbg-w">HELLO</div></div>
@@ -2728,7 +3239,9 @@
 
     <footer>
       <span class="fl">SWA</span>
-      <span>Shwe Win Aung · Myanmar → India → World</span>
+      <span
+        >Shwe Win Aung · The Developer → The Data Analyst → Hire for more
+      </span>
       <span>© 2026</span>
     </footer>
 
@@ -3128,9 +3641,9 @@
    "CURRENTLY BUILDING" TICKER
 ══════════════════════════════════════ */
       const nowItems = [
-        "Building Creative Projects · GSoC 2026 contributor",
-        "Learning Data Analyst · following new technology",
-        "Buidling AI automation model",
+        "Creative Developer · GSoC 2026 contributor",
+        "Learning Data Analyst · targeting developer roles",
+        "Building Automation System",
         "Open to fulltime & freelance globally",
       ];
       let nowIdx = 0;
@@ -3146,6 +3659,35 @@
           nowEl.style.transform = "translateY(0)";
         }, 350);
       }, 3000);
+
+      /* ── REVIEW CARD TILT + GLOW ── */
+      document.querySelectorAll(".rev-card").forEach((card) => {
+        const g = card.querySelector(".rev-card-glow");
+        card.addEventListener("mousemove", (e) => {
+          const r = card.getBoundingClientRect();
+          const cx = e.clientX - r.left - r.width / 2;
+          const cy = e.clientY - r.top - r.height / 2;
+          const rx = (cy / r.height) * 8;
+          const ry = -(cx / r.width) * 8;
+          card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) scale3d(1.015,1.015,1.015)`;
+          if (g) {
+            g.style.left = e.clientX - r.left + "px";
+            g.style.top = e.clientY - r.top + "px";
+          }
+        });
+        card.addEventListener("mouseleave", () => {
+          card.style.transform =
+            "perspective(900px) rotateX(0) rotateY(0) scale3d(1,1,1)";
+          card.style.transition =
+            "transform .4s cubic-bezier(.76,0,.24,1), background .3s, box-shadow .3s";
+          setTimeout(() => (card.style.transition = ""), 400);
+        });
+        card.addEventListener("mouseenter", () => {
+          cur.classList.add("big");
+          card.style.transition = "none";
+        });
+        card.addEventListener("mouseleave", () => cur.classList.remove("big"));
+      });
     </script>
   </body>
 </html>
