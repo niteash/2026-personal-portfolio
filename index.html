@@ -484,24 +484,74 @@
         .a-side,.exp-side,.res-side{grid-column:1/13;margin-top:5vh}
         .sec-title{grid-column:2/13}.sec-note{display:none}
         .pr-grid,.rev-grid{grid-template-columns:1fr}
+        .h-sub{grid-template-columns:1fr;gap:32px;align-items:start}
+        .h-desc,.h-meta{grid-column:auto}
+        .h-meta{align-items:flex-start}.h-meta .row{justify-content:flex-start}.h-meta{text-align:left}
       }
       @media (max-width:720px){
         :root{--gutter:18px}
         body{cursor:auto}#cur,#curTxt{display:none}
-        .frame.tr .nav-row{display:none}
         body::before{background-size:calc(100%/3) calc(100%/3)}
-        .wrow{grid-template-columns:1fr;gap:8px;padding:24px 0}
-        .wrow-idx,.wrow-tags{display:none}.wrow-meta{text-align:left;flex-direction:row;gap:14px}
+
+        /* header frame: keep only logo + theme, drop corner coords */
+        .frame.tl{font-size:9px;max-width:52%}
+        .frame.bl,.frame.br{display:none}
+        .frame.tr{pointer-events:auto}
+        .frame.tr .nav-row{display:flex;gap:14px}
+        .frame.tr .nav-row a{display:none}
+        .frame.tr .nav-row .tbtn{display:inline-block;font-size:11px}
+
+        /* hero */
+        .h-top{gap:10px;margin-bottom:4vh}
+        .h-top .c-a{grid-column:1/13}
+        .h-top .c-b{grid-column:1/13}
+        .h-top .c-c{grid-column:1/13;text-align:left}
+        .h-namefield{height:34vh;min-height:230px}
+        .h-namefallback{font-size:clamp(40px,15vw,90px)}
+        .scroll-hint{bottom:30px}
+
+        /* sections */
+        section{padding:9vh 0}
+        .sec-head{margin-bottom:6vh}
+        .sec-idx{grid-column:1/13}
+        .sec-title{grid-column:1/13;font-size:clamp(34px,10vw,54px)}
+
+        /* work list */
+        .witem .wrow,.wrow{grid-template-columns:1fr;gap:10px;padding:26px 0}
+        .wrow-idx,.wrow-tags{display:none}
+        .wrow-meta{text-align:left;align-items:flex-start}
+        .wrow-meta .wactions{align-items:flex-start;flex-direction:row;gap:12px;margin-top:10px}
         .wdesc{grid-column:1/2;max-height:none;opacity:1;margin-top:8px}
         .wrow:hover .wrow-title{transform:none}
+
+        /* stats / timeline */
         .stat-row{grid-template-columns:1fr}.stat{border-bottom:1px solid var(--line)}
         .tli{grid-template-columns:1fr;gap:8px}
+
+        /* now + status */
+        .now-item{grid-template-columns:1fr;gap:6px}
+        .status-card{padding:22px 18px}
+
+        /* reviews cta */
+        .rev-cta{flex-direction:column;align-items:flex-start}
+
+        /* contact */
+        .c-big{font-size:clamp(48px,17vw,110px)}
+        .c-mail{font-size:clamp(18px,6vw,30px);word-break:break-all}
+
+        /* progress hidden, AI fab compact */
+        #prog{display:none}
+        #aiFab{padding:12px 16px;font-size:10px}
+      }
+      @media (max-width:420px){
+        .h-namefallback{font-size:clamp(34px,13vw,64px)}
+        .btn{padding:12px 18px;font-size:10px}
       }
       @media (prefers-reduced-motion:reduce){
         .line>span,.sd>span,.reveal{transform:none!important;opacity:1!important}
       }
       @media print{
-        #cur,#curTxt,.frame,#nameGL,.scroll-hint,#pre,.c-links,.h-cta{display:none}
+        #cur,#curTxt,.frame,#nameGL,.scroll-hint,#pre,.c-links,.h-cta,#aiFab,#aiPanel,#mesh,#prog{display:none}
         body{cursor:auto}body::before{display:none}
         .reveal,.line>span,.sd>span{opacity:1!important;transform:none!important}
       }
@@ -1143,16 +1193,29 @@
           const a=stops[Math.min(i,stops.length-1)],b=stops[Math.min(i+1,stops.length-1)];
           return a.clone().lerp(b,f);
         }
-        const scaleX=0.92;
+        // raw text extent (for responsive fit)
+        let maxX=0,maxY=0;
+        for(let i=0;i<N;i++){ maxX=Math.max(maxX,Math.abs(pts[i].x)); maxY=Math.max(maxY,Math.abs(pts[i].y)); }
+        const rawX=new Float32Array(N*2);
         for(let i=0;i<N;i++){
-          home[i*2]=pts[i].x*scaleX; home[i*2+1]=pts[i].y*scaleX;
+          rawX[i*2]=pts[i].x; rawX[i*2+1]=pts[i].y;
           // start scattered for the intro assemble
-          positions[i*3]=home[i*2]+(Math.random()-0.5)*1.6;
-          positions[i*3+1]=home[i*2+1]+(Math.random()-0.5)*1.2;
+          positions[i*3]=pts[i].x*0.6+(Math.random()-0.5)*1.6;
+          positions[i*3+1]=pts[i].y*0.6+(Math.random()-0.5)*1.2;
           positions[i*3+2]=0;
           seed[i*2]=Math.random()*Math.PI*2; seed[i*2+1]=0.4+Math.random()*0.9;
           const col=grad(pts[i].u*0.85+Math.random()*0.15);
           colors[i*3]=col.r;colors[i*3+1]=col.g;colors[i*3+2]=col.b;
+        }
+        // responsive scale: fit text width within camera view with margin
+        function fitScale(aspect){
+          const marginX=0.86, marginY=0.7;
+          const sx=(aspect*marginX)/maxX;
+          const sy=(1*marginY)/maxY;
+          return Math.min(sx,sy);
+        }
+        function applyScale(sc){
+          for(let i=0;i<N;i++){ home[i*2]=rawX[i*2]*sc; home[i*2+1]=rawX[i*2+1]*sc; }
         }
         const geo=new THREE.BufferGeometry();
         geo.setAttribute("position",new THREE.BufferAttribute(positions,3));
@@ -1190,6 +1253,10 @@
           renderer.setSize(Math.max(r.width,1),Math.max(r.height,1),false);
           const aspect=Math.max(r.width,1)/Math.max(r.height,1);
           cam.left=-aspect;cam.right=aspect;cam.top=1;cam.bottom=-1;cam.updateProjectionMatrix();
+          const sc=fitScale(aspect);
+          applyScale(sc);
+          // scale dot size with the text so it stays proportionate
+          mat.size=Math.max(0.03,Math.min(0.09,sc*0.11));
         }
         window.addEventListener("resize",resize);
         resize();
